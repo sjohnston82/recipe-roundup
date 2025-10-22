@@ -113,7 +113,7 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-bg-light">
       {/* Hero Section with Carousel - Full Screen */}
-      <section className="min-h-[100svh] relative overflow-hidden isolate">
+      <section className="min-h-[calc(100svh-4rem-env(safe-area-inset-top))] relative overflow-hidden isolate">
         {/* Carousel Background */}
         <div className="absolute inset-0">
           {features.map((feature, index) => (
@@ -134,7 +134,7 @@ function LandingPage() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-20 mt-[calc(4rem+env(safe-area-inset-top))] min-h-[calc(100svh-4rem-env(safe-area-inset-top))] flex items-center">
+        <div className="relative z-20 min-h-full flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid lg:grid-cols-2 gap-12 items-center md:place-items-center">
               {/* Left Side - Main Hero */}
