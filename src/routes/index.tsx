@@ -279,7 +279,7 @@ function LandingPage() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        <div className="absolute bottom-2 sm:bottom-0 left-1/2 -translate-x-1/2 z-20 animate-bounce">
           <svg
             className="w-6 h-6 text-white"
             fill="none"
