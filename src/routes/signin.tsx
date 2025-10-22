@@ -1,0 +1,110 @@
+import * as React from "react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { signIn } from "../lib/auth-client";
+import BackgroundCarousel from "../components/BackgroundCarousel";
+import { signinCarouselImages } from "../lib/carousel-images";
+
+export const Route = createFileRoute("/signin")({
+  component: SignInForm,
+});
+
+function SignInForm() {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const navigate = useNavigate();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await signIn.email(
+      { email, password },
+      {
+        onSuccess: () => navigate({ to: "/" }),
+        onError: () => {
+          setError("Sign in attempt failed.");
+        },
+      }
+    );
+  }
+
+  return (
+    <div className="relative min-h-screen flex flex-col">
+      <BackgroundCarousel images={signinCarouselImages} />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-sm bg-white/90 backdrop-blur-md rounded-lg shadow-xl overflow-hidden">
+          {/* Gradient header */}
+          <div className="bg-gradient-to-r from-[#292B49] to-[#7E9FC8] p-6 text-white">
+            <h2 className="text-2xl font-bold text-center">Sign In</h2>
+          </div>
+
+          <div className="p-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {error && (
+                <div className="p-3 bg-[rgba(255,107,107,0.1)] border border-[#FF6B6B] rounded-md text-[#FF6B6B] text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-[#64748B]"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-[#64748B]"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full px-4 py-2 mt-4 bg-gradient-to-r from-[#292B49] to-[#7E9FC8] text-white rounded-md border-none cursor-pointer"
+              >
+                Sign In
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <span className="text-sm text-[#64748B]">
+                Don't have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="text-[#7E9FC8] font-medium no-underline"
+                >
+                  Sign Up
+                </Link>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SignInForm;

@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Recipe {
+  id           String       @id @default(uuid())
+  title        String
+  userId       String?
+  cuisine      String?
+  sourceUrl    String
+  description  String?
+  ingredients  String[]
+  instructions String[]
+  prepTime     String?
+  cookTime     String?
+  servings     String?
+  tags         String[]     @map("category")
+  imageUrl     String?
+  rating       Float?       @default(0)
+  lastMadeAt   DateTime?
+  nutrition    Json?
+  createdAt    DateTime     @default(now())
+  shareToken   String?      @unique
+  notes        RecipeNote[]
+  user         User?        @relation(fields: [userId], references: [id])
+}
+
+model RecipeNote {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  recipeId  String
+  userId    String?
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  name          String?
+  password      String?
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  Recipe        Recipe[]
+  recipeNotes   RecipeNote[]
+  account       Account[]
+  session       Session[]
+}
+
+model Verification {
+  id         String    @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+}
+
+model DomainSelector {
+  id                   String   @id @default(uuid())
+  domain               String   @unique
+  titleSelector        String?
+  descriptionSelector  String?
+  ingredientsSelector  String?
+  instructionsSelector String?
+  prepTimeSelector     String?
+  cookTimeSelector     String?
+  servingsSelector     String?
+  imageSelector        String?
+  cuisineSelector      String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
