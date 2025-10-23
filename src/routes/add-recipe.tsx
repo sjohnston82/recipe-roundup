@@ -326,20 +326,20 @@ export default function AddRecipePage() {
                 >
                   Recipe URL
                 </Label>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Input
                     id="url-input"
                     type="url"
                     placeholder="Enter recipe URL"
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
-                    className="flex-1"
+                    className="flex-1 w-full"
                   />
                   <Button
                     type="button"
                     onClick={handleUrlScrape}
                     disabled={isLoading}
-                    className="bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90"
+                    className="w-full sm:w-auto bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90"
                   >
                     {isLoading ? "Getting..." : "Get Recipe Info"}
                   </Button>
@@ -579,11 +579,11 @@ export default function AddRecipePage() {
                           />
                         </div>
                         {instructions.length > 1 && (
-                        <Button
-                          type="button"
-                          onClick={() => removeInstruction(index)}
-                          className="bg-danger-red hover:bg-red-600 px-4 h-fit mt-6"
-                        >
+                          <Button
+                            type="button"
+                            onClick={() => removeInstruction(index)}
+                            className="bg-danger-red hover:bg-red-600 px-4 h-fit mt-6"
+                          >
                             Remove
                           </Button>
                         )}
