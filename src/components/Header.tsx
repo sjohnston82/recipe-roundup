@@ -70,8 +70,8 @@ export default function Header({
                   {/* Avatar with Dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent rounded-full">
-                        <Avatar className="w-10 h-10 cursor-pointer transition-all">
+                      <button className="rounded-full p-0 outline-none focus:outline-none">
+                        <Avatar className="w-10 h-10 cursor-pointer">
                           <AvatarImage
                             src={session.user?.image || ""}
                             alt={session.user?.name || "User"}
@@ -131,8 +131,8 @@ export default function Header({
             <div className="md:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent rounded-full">
-                    <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-transparent transition-all">
+                  <button className="rounded-full p-0 outline-none focus:outline-none">
+                    <Avatar className="w-8 h-8 cursor-pointer">
                       <AvatarImage
                         src={session.user?.image || ""}
                         alt={session.user?.name || "User"}
