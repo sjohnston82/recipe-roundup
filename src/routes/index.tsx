@@ -134,7 +134,7 @@ function LandingPage() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-20 min-h-full flex items-center justify-center pt-6 sm:pt-8">
+        <div className="relative z-20 min-h-full flex items-center justify-center pt-6 sm:pt-8 lg:pt-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid lg:grid-cols-2 gap-12 items-center md:place-items-center">
               {/* Left Side - Main Hero */}
