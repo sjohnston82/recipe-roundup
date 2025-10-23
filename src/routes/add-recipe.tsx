@@ -3,12 +3,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Switch } from "../components/ui/switch";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import toast from "react-hot-toast";
-import { DomainSelectorManager } from "../components/DomainSelectorManager";
 import { useCreateRecipe, type CreateRecipeData } from "../lib/api-hooks";
 import { TagInput } from "@/components/TagsInput";
 import { useSession } from "@/lib/auth-client";
@@ -51,14 +49,11 @@ type RecipeFormData = z.infer<typeof recipeSchema>;
 export default function AddRecipePage() {
   const navigate = useNavigate();
   const { data: session, isPending: sessionLoading } = useSession();
-  const [isPrefillMode, setIsPrefillMode] = React.useState(false);
+  const [isPrefillMode, setIsPrefillMode] = React.useState(true);
   const [prefilledOnce, setPrefilledOnce] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [urlInput, setUrlInput] = React.useState("");
-  const [showDomainManager, setShowDomainManager] = React.useState(false);
-  const [currentDomain, setCurrentDomain] = React.useState<
-    string | undefined
-  >();
+  
 
   const createRecipeMutation = useCreateRecipe();
 
@@ -293,25 +288,34 @@ export default function AddRecipePage() {
           </div>
 
           <div className="p-8">
-            {/* Toggle between prefill and manual */}
-            <div className="flex items-center space-x-2 mb-8">
-              <Label
-                htmlFor="prefill-mode"
-                className="text-sm font-medium text-muted-text"
-              >
-                Manually fill form
-              </Label>
-              <Switch
-                id="prefill-mode"
-                checked={isPrefillMode}
-                onCheckedChange={setIsPrefillMode}
-              />
-              <Label
-                htmlFor="prefill-mode"
-                className="text-sm font-medium text-muted-text"
-              >
-                Prefill from URL
-              </Label>
+            {/* Centered large toggle between Prefill and Manual */}
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex rounded-full border border-gray-300 bg-white overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setIsPrefillMode(true)}
+                  className={`px-6 py-3 text-base font-medium transition-colors ${
+                    isPrefillMode
+                      ? "bg-gradient-to-r from-gradient-dark to-gradient-light text-white"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  aria-pressed={isPrefillMode}
+                >
+                  Prefill
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPrefillMode(false)}
+                  className={`px-6 py-3 text-base font-medium transition-colors ${
+                    !isPrefillMode
+                      ? "bg-gradient-to-r from-gradient-dark to-gradient-light text-white"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  aria-pressed={!isPrefillMode}
+                >
+                  Manual
+                </button>
+              </div>
             </div>
 
             {/* URL input for prefill mode */}
@@ -323,22 +327,13 @@ export default function AddRecipePage() {
                 >
                   Recipe URL
                 </Label>
-                <div className="flex gap-3 mb-3">
+                <div className="flex gap-3">
                   <Input
                     id="url-input"
                     type="url"
-                    placeholder="Enter recipe URL to scrape data"
+                    placeholder="Enter recipe URL"
                     value={urlInput}
-                    onChange={(e) => {
-                      setUrlInput(e.target.value);
-                      // Extract domain for selector management
-                      try {
-                        const url = new URL(e.target.value);
-                        setCurrentDomain(url.hostname.replace(/^www\./, ""));
-                      } catch {
-                        setCurrentDomain(undefined);
-                      }
-                    }}
+                    onChange={(e) => setUrlInput(e.target.value)}
                     className="flex-1"
                   />
                   <Button
@@ -347,31 +342,14 @@ export default function AddRecipePage() {
                     disabled={isLoading}
                     className="bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90"
                   >
-                    {isLoading ? "Scraping..." : "Scrape"}
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => setShowDomainManager(true)}
-                    variant="outline"
-                    className="whitespace-nowrap"
-                  >
-                    Manage Selectors
+                    {isLoading ? "Getting..." : "Get Recipe Info"}
                   </Button>
                 </div>
-                {isLoading && (
-                  <div className="text-sm text-muted-text">
-                    Analyzing the recipe page and extracting data...
-                  </div>
-                )}
-                {currentDomain && (
-                  <div className="text-sm text-gray-600">
-                    Domain: {currentDomain}
-                  </div>
-                )}
               </div>
             )}
 
-            {/* Recipe form */}
+            {/* Recipe form or loading area */}
+            {(!isPrefillMode || prefilledOnce) ? (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Image Upload Section */}
               <div className="space-y-4">
@@ -670,16 +648,21 @@ export default function AddRecipePage() {
                 </Button>
               </div>
             </form>
+            ) : (
+              isPrefillMode && isLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gradient-dark"></div>
+                    <p className="mt-2 text-muted-text">Getting recipe info...</p>
+                  </div>
+                </div>
+              ) : null
+            )}
           </div>
         </div>
       </div>
 
-      {/* Domain Selector Manager Modal */}
-      <DomainSelectorManager
-        isOpen={showDomainManager}
-        onClose={() => setShowDomainManager(false)}
-        domain={currentDomain}
-      />
+      {/* Advanced options removed for now */}
     </div>
   );
 }
