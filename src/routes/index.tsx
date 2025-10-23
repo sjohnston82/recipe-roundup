@@ -113,7 +113,7 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-bg-light">
       {/* Hero Section with Carousel - Full Screen */}
-      <section className="min-h-[calc(100svh-4rem-env(safe-area-inset-top))] relative overflow-hidden isolate">
+      <section className="min-h-[calc(100svh-4rem-env(safe-area-inset-top))] lg:min-h-[100svh] relative overflow-hidden isolate">
         {/* Carousel Background */}
         <div className="absolute inset-0">
           {features.map((feature, index) => (
@@ -279,7 +279,7 @@ function LandingPage() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-2 sm:bottom-0 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        <div className="absolute bottom-2 sm:bottom-0 lg:bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
           <svg
             className="w-6 h-6 text-white"
             fill="none"
