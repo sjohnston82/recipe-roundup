@@ -108,7 +108,7 @@ export const APIRoute = createAPIFileRoute("/api/scrape-recipe")({
       return Response.json({
         success: true,
         data: recipeData,
-        usedCustomSelectors: !!domainSelector,
+        usedCustomSelectors: !!ds,
         extractionStats: {
           total: Object.keys(results).length,
           successful: successfulExtractions,
