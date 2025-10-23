@@ -289,11 +289,11 @@ export default function AddRecipePage() {
           <div className="p-8">
             {/* Centered large toggle between Prefill and Manual */}
             <div className="flex justify-center mb-8">
-              <div className="inline-flex rounded-full border border-gray-300 bg-white overflow-hidden">
+              <div className="inline-flex rounded-full border border-gray-300 bg-white overflow-hidden ">
                 <button
                   type="button"
                   onClick={() => setIsPrefillMode(true)}
-                  className={`px-6 py-3 text-base font-medium transition-colors ${
+                  className={`px-6 py-3 text-base font-medium transition-colors cursor-pointer ${
                     isPrefillMode
                       ? "bg-gradient-to-r from-gradient-dark to-gradient-light text-white"
                       : "text-gray-700 hover:bg-gray-100"
@@ -305,7 +305,7 @@ export default function AddRecipePage() {
                 <button
                   type="button"
                   onClick={() => setIsPrefillMode(false)}
-                  className={`px-6 py-3 text-base font-medium transition-colors ${
+                  className={`px-6 py-3 text-base font-medium transition-colors cursor-pointer ${
                     !isPrefillMode
                       ? "bg-gradient-to-r from-gradient-dark to-gradient-light text-white"
                       : "text-gray-700 hover:bg-gray-100"
@@ -339,7 +339,7 @@ export default function AddRecipePage() {
                     type="button"
                     onClick={handleUrlScrape}
                     disabled={isLoading}
-                    className="w-full sm:w-auto bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90"
+                    className="w-full sm:w-auto bg-gradient-to-r from-gradient-dark to-gradient-light cursor-pointer hover:opacity-90"
                   >
                     {isLoading ? "Getting..." : "Get Recipe Info"}
                   </Button>

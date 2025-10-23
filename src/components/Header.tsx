@@ -63,7 +63,7 @@ export default function Header({
             {session ? (
               <>
                 <div className="flex items-center space-x-4">
-                  <span className="text-white text-sm">
+                  <span className="text-white text-lg font-semibold">
                     Welcome, {session.user?.name || session.user?.email}
                   </span>
 
@@ -71,7 +71,7 @@ export default function Header({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent rounded-full">
-                        <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-transparent transition-all">
+                        <Avatar className="w-10 h-10 cursor-pointer transition-all">
                           <AvatarImage
                             src={session.user?.image || ""}
                             alt={session.user?.name || "User"}

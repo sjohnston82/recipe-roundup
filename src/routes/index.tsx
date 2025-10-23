@@ -296,7 +296,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Why Choose Recipe Roundup - Animated Slide In */}
       <section id="why-section" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
@@ -325,9 +324,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof removed */}
-
-      {/* Final CTA */}
       <section className="py-20 bg-bg-light">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-gradient-dark mb-6">
@@ -340,7 +336,7 @@ function LandingPage() {
           <Link to="/signup">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-gradient-dark to-gradient-light text-white hover:opacity-90 px-12 py-6 text-xl font-semibold"
+              className="bg-gradient-to-r cursor-pointer from-gradient-dark to-gradient-light text-white hover:opacity-90 px-12 py-6 text-xl font-semibold"
             >
               Get Started for Free
             </Button>
