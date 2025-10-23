@@ -53,7 +53,6 @@ export default function AddRecipePage() {
   const [prefilledOnce, setPrefilledOnce] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [urlInput, setUrlInput] = React.useState("");
-  
 
   const createRecipeMutation = useCreateRecipe();
 
@@ -349,315 +348,315 @@ export default function AddRecipePage() {
             )}
 
             {/* Recipe form or loading area */}
-            {(!isPrefillMode || prefilledOnce) ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Image Upload Section */}
-              <div className="space-y-4">
-                <Label className="block text-lg font-semibold text-gradient-dark">
-                  Recipe Image
-                </Label>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <Label
-                      htmlFor="image-url"
-                      className="block text-sm font-medium text-muted-text mb-2"
-                    >
-                      Image URL
-                    </Label>
-                    <Input
-                      id="image-url"
-                      type="url"
-                      {...register("imageUrl")}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Basic Info */}
-              <div className="space-y-4">
-                <Label className="block text-lg font-semibold text-gradient-dark">
-                  Basic Information
-                </Label>
-
-                <div>
-                  <Label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-muted-text mb-2"
-                  >
-                    Recipe Title *
+            {!isPrefillMode || prefilledOnce ? (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Image Upload Section */}
+                <div className="space-y-4">
+                  <Label className="block text-lg font-semibold text-gradient-dark">
+                    Recipe Image
                   </Label>
-                  <Input
-                    id="title"
-                    {...register("title")}
-                    placeholder="Enter recipe title"
-                    className="w-full"
-                  />
-                  {errors.title && (
-                    <span className="text-sm text-danger mt-1 block">
-                      {errors.title.message}
-                    </span>
-                  )}
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-muted-text mb-2"
-                  >
-                    Description
-                  </Label>
-                  <textarea
-                    id="description"
-                    {...register("description")}
-                    placeholder="Enter recipe description"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none min-h-[100px] focus:ring-2 focus:ring-gradient-light focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="sourceUrl"
-                    className="block text-sm font-medium text-muted-text mb-2"
-                  >
-                    Source URL *
-                  </Label>
-                  <Input
-                    id="sourceUrl"
-                    type="url"
-                    {...register("sourceUrl")}
-                    placeholder="Enter source URL"
-                    className="w-full"
-                  />
-                  {errors.sourceUrl && (
-                    <span className="text-sm text-danger mt-1 block">
-                      {errors.sourceUrl.message}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Tags moved below Nutrition */}
-
-              {/* Recipe Details */}
-              <div className="space-y-4">
-                <Label className="block text-lg font-semibold text-gradient-dark">
-                  Recipe Details
-                </Label>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label
-                      htmlFor="cuisine"
-                      className="block text-sm font-medium text-muted-text mb-2"
-                    >
-                      Cuisine
-                    </Label>
-                    <Input
-                      id="cuisine"
-                      {...register("cuisine")}
-                      placeholder="e.g., Italian, Mexican"
-                      className={`w-full ${highlightIfMissing(
-                        watch("cuisine")
-                      )}`}
-                    />
-                  </div>
-
-                  <div>
-                    <Label
-                      htmlFor="servings"
-                      className="block text-sm font-medium text-muted-text mb-2"
-                    >
-                      Servings
-                    </Label>
-                    <Input
-                      id="servings"
-                      type="text"
-                      {...register("servings")}
-                      placeholder="4"
-                      className={`w-full ${highlightIfMissing(
-                        watch("servings")
-                      )}`}
-                    />
-                  </div>
-
-                  <div>
-                    <Label
-                      htmlFor="prepTime"
-                      className="block text-sm font-medium text-muted-text mb-2"
-                    >
-                      Prep Time (minutes)
-                    </Label>
-                    <Input
-                      id="prepTime"
-                      type="text"
-                      {...register("prepTime")}
-                      placeholder="15"
-                      className={`w-full ${highlightIfMissing(
-                        watch("prepTime")
-                      )}`}
-                    />
-                  </div>
-                  <div>
-                    <Label
-                      htmlFor="cookTime"
-                      className="block text-sm font-medium text-muted-text mb-2"
-                    >
-                      Cook Time (minutes)
-                    </Label>
-                    <Input
-                      id="cookTime"
-                      type="text"
-                      {...register("cookTime")}
-                      placeholder="30"
-                      className={`w-full ${highlightIfMissing(
-                        watch("cookTime")
-                      )}`}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Ingredients */}
-              <div className="space-y-4">
-                <Label className="block text-lg font-semibold text-gradient-dark">
-                  Ingredients
-                </Label>
-                <div className="space-y-3">
-                  {ingredients.map((_, index) => (
-                    <div key={index} className="flex gap-3">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <Label
+                        htmlFor="image-url"
+                        className="block text-sm font-medium text-muted-text mb-2"
+                      >
+                        Image URL
+                      </Label>
                       <Input
-                        {...register(`ingredients.${index}`)}
-                        placeholder={`Ingredient ${index + 1}`}
-                        className={`flex-1 ${highlightIfMissing(
-                          watch(`ingredients.${index}`)
+                        id="image-url"
+                        type="url"
+                        {...register("imageUrl")}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Basic Info */}
+                <div className="space-y-4">
+                  <Label className="block text-lg font-semibold text-gradient-dark">
+                    Basic Information
+                  </Label>
+
+                  <div>
+                    <Label
+                      htmlFor="title"
+                      className="block text-sm font-medium text-muted-text mb-2"
+                    >
+                      Recipe Title *
+                    </Label>
+                    <Input
+                      id="title"
+                      {...register("title")}
+                      placeholder="Enter recipe title"
+                      className="w-full"
+                    />
+                    {errors.title && (
+                      <span className="text-sm text-danger mt-1 block">
+                        {errors.title.message}
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label
+                      htmlFor="description"
+                      className="block text-sm font-medium text-muted-text mb-2"
+                    >
+                      Description
+                    </Label>
+                    <textarea
+                      id="description"
+                      {...register("description")}
+                      placeholder="Enter recipe description"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none min-h-[100px] focus:ring-2 focus:ring-gradient-light focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <Label
+                      htmlFor="sourceUrl"
+                      className="block text-sm font-medium text-muted-text mb-2"
+                    >
+                      Source URL *
+                    </Label>
+                    <Input
+                      id="sourceUrl"
+                      type="url"
+                      {...register("sourceUrl")}
+                      placeholder="Enter source URL"
+                      className="w-full"
+                    />
+                    {errors.sourceUrl && (
+                      <span className="text-sm text-danger mt-1 block">
+                        {errors.sourceUrl.message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tags moved below Nutrition */}
+
+                {/* Recipe Details */}
+                <div className="space-y-4">
+                  <Label className="block text-lg font-semibold text-gradient-dark">
+                    Recipe Details
+                  </Label>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label
+                        htmlFor="cuisine"
+                        className="block text-sm font-medium text-muted-text mb-2"
+                      >
+                        Cuisine
+                      </Label>
+                      <Input
+                        id="cuisine"
+                        {...register("cuisine")}
+                        placeholder="e.g., Italian, Mexican"
+                        className={`w-full ${highlightIfMissing(
+                          watch("cuisine")
                         )}`}
                       />
-                      {ingredients.length > 1 && (
-                        <Button
-                          type="button"
-                          onClick={() => removeIngredient(index)}
-                          className="bg-danger-red hover:bg-red-600 px-4"
-                        >
-                          Remove
-                        </Button>
-                      )}
                     </div>
-                  ))}
-                  <Button
-                    type="button"
-                    onClick={addIngredient}
-                    className="bg-success-green hover:bg-green-600 w-fit"
-                  >
-                    Add Ingredient
-                  </Button>
-                  {errors.ingredients && (
-                    <span className="text-sm text-danger block">
-                      {errors.ingredients.message}
-                    </span>
-                  )}
-                </div>
-              </div>
 
-              {/* Instructions */}
-              <div className="space-y-4">
-                <Label className="block text-lg font-semibold text-gradient-dark">
-                  Instructions
-                </Label>
-                <div className="space-y-3">
-                  {instructions.map((_, index) => (
-                    <div key={index} className="flex gap-3">
-                      <div className="flex-1">
-                        <Label className="block text-sm font-medium text-muted-text mb-1">
-                          Step {index + 1}
-                        </Label>
-                        <textarea
-                          {...register(`instructions.${index}`)}
-                          placeholder={`Describe step ${index + 1}`}
-                          className={`w-full px-3 py-2 border border-gray-300 rounded-md outline-none min-h-[80px] focus:ring-2 focus:ring-gradient-light focus:border-transparent ${highlightIfMissing(
-                            watch(`instructions.${index}`)
+                    <div>
+                      <Label
+                        htmlFor="servings"
+                        className="block text-sm font-medium text-muted-text mb-2"
+                      >
+                        Servings
+                      </Label>
+                      <Input
+                        id="servings"
+                        type="text"
+                        {...register("servings")}
+                        placeholder="4"
+                        className={`w-full ${highlightIfMissing(
+                          watch("servings")
+                        )}`}
+                      />
+                    </div>
+
+                    <div>
+                      <Label
+                        htmlFor="prepTime"
+                        className="block text-sm font-medium text-muted-text mb-2"
+                      >
+                        Prep Time (minutes)
+                      </Label>
+                      <Input
+                        id="prepTime"
+                        type="text"
+                        {...register("prepTime")}
+                        placeholder="15"
+                        className={`w-full ${highlightIfMissing(
+                          watch("prepTime")
+                        )}`}
+                      />
+                    </div>
+                    <div>
+                      <Label
+                        htmlFor="cookTime"
+                        className="block text-sm font-medium text-muted-text mb-2"
+                      >
+                        Cook Time (minutes)
+                      </Label>
+                      <Input
+                        id="cookTime"
+                        type="text"
+                        {...register("cookTime")}
+                        placeholder="30"
+                        className={`w-full ${highlightIfMissing(
+                          watch("cookTime")
+                        )}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ingredients */}
+                <div className="space-y-4">
+                  <Label className="block text-lg font-semibold text-gradient-dark">
+                    Ingredients
+                  </Label>
+                  <div className="space-y-3">
+                    {ingredients.map((_, index) => (
+                      <div key={index} className="flex gap-3">
+                        <Input
+                          {...register(`ingredients.${index}`)}
+                          placeholder={`Ingredient ${index + 1}`}
+                          className={`flex-1 ${highlightIfMissing(
+                            watch(`ingredients.${index}`)
                           )}`}
                         />
+                        {ingredients.length > 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => removeIngredient(index)}
+                            className="bg-danger-red hover:bg-red-600 px-4"
+                          >
+                            Remove
+                          </Button>
+                        )}
                       </div>
-                      {instructions.length > 1 && (
+                    ))}
+                    <Button
+                      type="button"
+                      onClick={addIngredient}
+                      className="bg-success-green hover:bg-green-600 w-fit"
+                    >
+                      Add Ingredient
+                    </Button>
+                    {errors.ingredients && (
+                      <span className="text-sm text-danger block">
+                        {errors.ingredients.message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Instructions */}
+                <div className="space-y-4">
+                  <Label className="block text-lg font-semibold text-gradient-dark">
+                    Instructions
+                  </Label>
+                  <div className="space-y-3">
+                    {instructions.map((_, index) => (
+                      <div key={index} className="flex gap-3">
+                        <div className="flex-1">
+                          <Label className="block text-sm font-medium text-muted-text mb-1">
+                            Step {index + 1}
+                          </Label>
+                          <textarea
+                            {...register(`instructions.${index}`)}
+                            placeholder={`Describe step ${index + 1}`}
+                            className={`w-full px-3 py-2 border border-gray-300 rounded-md outline-none min-h-[80px] focus:ring-2 focus:ring-gradient-light focus:border-transparent ${highlightIfMissing(
+                              watch(`instructions.${index}`)
+                            )}`}
+                          />
+                        </div>
+                        {instructions.length > 1 && (
                         <Button
                           type="button"
                           onClick={() => removeInstruction(index)}
-                          className="bg-danger hover:bg-red-600 px-4 h-fit mt-6"
+                          className="bg-danger-red hover:bg-red-600 px-4 h-fit mt-6"
                         >
-                          Remove
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                  <Button
-                    type="button"
-                    onClick={addInstruction}
-                    className="bg-success-green hover:bg-green-600 w-fit"
-                  >
-                    Add Instruction
-                  </Button>
-                  {errors.instructions && (
-                    <span className="text-sm text-danger block">
-                      {errors.instructions.message}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <Label className="block text-lg font-semibold text-gradient-dark">
-                  Nutrition Information
-                </Label>
-                <NutritionInfo
-                  nutrition={nutrition || null}
-                  isEditing={true}
-                  onNutritionChange={handleNutritionChange}
-                />
-              </div>
-
-              {/* Tags - moved below Nutrition, with subtle emphasis */}
-              <div className="space-y-3 p-4 rounded-md border border-sky-200 bg-sky-50/60">
-                <Label className="block text-lg font-semibold text-sky-800">
-                  Tags
-                </Label>
-                <TagInput
-                  tags={filteredTags}
-                  onChange={(updatedTags) => {
-                    setValue("tags", updatedTags);
-                  }}
-                />
-              </div>
-
-              {/* Submit buttons */}
-              <div className="flex gap-4 pt-6 border-t">
-                <Button
-                  type="button"
-                  onClick={() => navigate({ to: "/" })}
-                  variant="outline"
-                  className="flex-1 border-muted-text text-muted-text hover:bg-gray-100"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createRecipeMutation.isPending}
-                  className="flex-1 bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90 text-lg py-3"
-                >
-                  {createRecipeMutation.isPending ? "Saving..." : "Save Recipe"}
-                </Button>
-              </div>
-            </form>
-            ) : (
-              isPrefillMode && isLoading ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gradient-dark"></div>
-                    <p className="mt-2 text-muted-text">Getting recipe info...</p>
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      onClick={addInstruction}
+                      className="bg-success-green hover:bg-green-600 w-fit"
+                    >
+                      Add Instruction
+                    </Button>
+                    {errors.instructions && (
+                      <span className="text-sm text-danger block">
+                        {errors.instructions.message}
+                      </span>
+                    )}
                   </div>
                 </div>
-              ) : null
-            )}
+
+                <div className="space-y-4">
+                  <Label className="block text-lg font-semibold text-gradient-dark">
+                    Nutrition Information
+                  </Label>
+                  <NutritionInfo
+                    nutrition={nutrition || null}
+                    isEditing={true}
+                    onNutritionChange={handleNutritionChange}
+                  />
+                </div>
+
+                {/* Tags - moved below Nutrition, with subtle emphasis */}
+                <div className="space-y-3 p-4 rounded-md border border-sky-200 bg-sky-50/60">
+                  <Label className="block text-lg font-semibold text-sky-800">
+                    Tags
+                  </Label>
+                  <TagInput
+                    tags={filteredTags}
+                    onChange={(updatedTags) => {
+                      setValue("tags", updatedTags);
+                    }}
+                  />
+                </div>
+
+                {/* Submit buttons */}
+                <div className="flex gap-4 pt-6 border-t">
+                  <Button
+                    type="button"
+                    onClick={() => navigate({ to: "/" })}
+                    variant="outline"
+                    className="flex-1 border-muted-text text-muted-text hover:bg-gray-100"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={createRecipeMutation.isPending}
+                    className="flex-1 bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90 text-lg py-3"
+                  >
+                    {createRecipeMutation.isPending
+                      ? "Saving..."
+                      : "Save Recipe"}
+                  </Button>
+                </div>
+              </form>
+            ) : isPrefillMode && isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gradient-dark"></div>
+                  <p className="mt-2 text-muted-text">Getting recipe info...</p>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
