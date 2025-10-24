@@ -14,6 +14,39 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  /* Keep vertical scrollbar space reserved on the right to avoid layout shift */
+  scrollbar-gutter: stable;
+  /* Always show vertical scrollbar to prevent width changes on toggle */
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body {
+  /* Ensure body also maintains a persistent vertical scrollbar */
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+/* Neutralize scroll-lock padding/margin adjustments some libs add on overlays */
+.react-remove-scroll-bar,
+html.react-remove-scroll-bar,
+body.react-remove-scroll-bar,
+body.react-remove-scroll-body {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Ensure the app scroll container also reserves scrollbar gutter */
+main {
+  scrollbar-gutter: stable;
+}
+
+/* Prevent libraries from adding padding-right to body when menus/dialogs open */
+.react-remove-scroll-body {
+  padding-right: 0 !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -134,7 +167,7 @@ code {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground pt-16;
+    @apply bg-background text-foreground;
   }
 }
 

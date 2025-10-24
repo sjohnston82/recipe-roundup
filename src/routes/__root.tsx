@@ -39,7 +39,9 @@ export const Route = createRootRoute({
     <QueryClientProvider client={queryClient}>
       <RootDocument>
         <Header />
-        <Outlet />
+        <main className="pt-16">
+          <Outlet />
+        </main>
       </RootDocument>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
@@ -52,7 +54,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="bg-gradient-to-b from-[#292B49] to-[#7E9FC8] h-screen">
+      <body className="bg-gradient-to-b from-[#292B49] to-[#7E9FC8] min-h-screen">
         {children}
         <Toaster />
         <Scripts />
