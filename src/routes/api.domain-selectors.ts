@@ -1,9 +1,7 @@
 import { createAPIFileRoute } from "@tanstack/react-start/api";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../server/db/prisma";
 import { z } from "zod";
 import { auth } from "../lib/auth";
-
-const prisma = new PrismaClient();
 
 const domainSelectorSchema = z.object({
   domain: z.string().min(1, "Domain is required"),

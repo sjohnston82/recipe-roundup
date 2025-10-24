@@ -4,13 +4,21 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { ShoppingCartIcon, ChevronsUpDown as CaretIcon } from "lucide-react";
+import toast from "react-hot-toast";
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { ChevronsUpDown, XIcon } from "lucide-react";
 import { IngredientScaler } from "../IngredientScaler";
-import { scaleIngredient } from "../../lib/ingredient-scaling";
+import { scaleIngredient, parseIngredient } from "../../lib/ingredient-scaling";
 import { formatIngredientWithBoldMeasurements } from "../../lib/ingredient-formatting";
 import type { Recipe } from "../../lib/api-hooks";
 
@@ -48,6 +56,61 @@ export function RecipeIngredients({
   addArrayItem,
   removeArrayItem,
 }: RecipeIngredientsProps) {
+  const [lists, setLists] = React.useState<any[]>([]);
+  const [loadingLists, setLoadingLists] = React.useState(false);
+  const [addedToList, setAddedToList] = React.useState<Set<string>>(new Set());
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        setLoadingLists(true);
+        const res = await fetch("/api/shopping-lists", {
+          credentials: "include",
+        });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && Array.isArray(json.lists)) {
+          setLists(json.lists);
+        }
+      } catch (_) {
+        // ignore
+      } finally {
+        setLoadingLists(false);
+      }
+    })();
+  }, []);
+
+  const addToList = async (listId: string, text: string) => {
+    try {
+      const parsed = parseIngredient(text);
+      const res = await fetch(`/api/shopping-list-items/${listId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          items: [
+            {
+              originalText: text,
+              normalizedName: parsed.ingredient || undefined,
+              quantity: parsed.amount ? String(parsed.amount) : undefined,
+              unit: parsed.unit || undefined,
+              recipeId: currentRecipe.id,
+            },
+          ],
+        }),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      const listName = lists.find((l) => l.id === listId)?.name || "list";
+      toast.success(`${text} has been added to the ${listName} shopping list!`);
+      setAddedToList((prev) => {
+        const next = new Set(prev);
+        next.add(text);
+        return next;
+      });
+    } catch (e) {
+      toast.error("Failed to add to shopping list");
+    }
+  };
+
   return (
     <Collapsible
       open={isShowingIngredients}
@@ -108,13 +171,14 @@ export function RecipeIngredients({
             <ul className="space-y-2 mt-2">
               {currentRecipe.ingredients.map((ingredient, index) => {
                 const isChecked = checkedIngredients.has(index);
-                const scaledIngredient = scaleIngredient(ingredient, ingredientScale);
-                
+                const scaledIngredient = scaleIngredient(
+                  ingredient,
+                  ingredientScale
+                );
+                const alreadyAdded = addedToList.has(scaledIngredient);
+
                 return (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3"
-                  >
+                  <li key={index} className="flex items-start gap-3">
                     <Checkbox
                       id={`ingredient-${index}`}
                       checked={isChecked}
@@ -129,6 +193,49 @@ export function RecipeIngredients({
                     >
                       {formatIngredientWithBoldMeasurements(scaledIngredient)}
                     </label>
+                    <div className="flex items-center gap-2">
+                      {alreadyAdded ? null : lists.length <= 1 ? (
+                        <Button
+                          size="sm"
+                          className="bg-success-green hover:bg-green-600"
+                          disabled={loadingLists}
+                          onClick={() =>
+                            lists[0]?.id &&
+                            addToList(lists[0].id, scaledIngredient)
+                          }
+                        >
+                          <ShoppingCartIcon className="w-4 h-4 mr-1" />
+                          Add
+                        </Button>
+                      ) : (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="cursor-pointer"
+                            >
+                              <ShoppingCartIcon className="w-4 h-4 mr-1" />
+                              Add
+                              <CaretIcon className="w-3 h-3 ml-1" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            {lists.map((l) => (
+                              <DropdownMenuItem
+                                key={l.id}
+                                onClick={() =>
+                                  addToList(l.id, scaledIngredient)
+                                }
+                                className="cursor-pointer"
+                              >
+                                {l.name}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </div>
                   </li>
                 );
               })}

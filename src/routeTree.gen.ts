@@ -14,9 +14,11 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as UnauthorizedImport } from './routes/unauthorized'
 import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
+import { Route as ShoppingListsImport } from './routes/shopping-lists'
 import { Route as ProfileImport } from './routes/profile'
 import { Route as AddRecipeImport } from './routes/add-recipe'
 import { Route as IndexImport } from './routes/index'
+import { Route as ShoppingListsListIdImport } from './routes/shopping-lists.$listId'
 import { Route as ShareTokenImport } from './routes/share.$token'
 import { Route as RecipeRecipeIdImport } from './routes/recipe.$recipeId'
 import { Route as RecipeRecipeIdPrintImport } from './routes/recipe.$recipeId.print'
@@ -42,6 +44,12 @@ const SigninRoute = SigninImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ShoppingListsRoute = ShoppingListsImport.update({
+  id: '/shopping-lists',
+  path: '/shopping-lists',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const ProfileRoute = ProfileImport.update({
   id: '/profile',
   path: '/profile',
@@ -58,6 +66,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const ShoppingListsListIdRoute = ShoppingListsListIdImport.update({
+  id: '/$listId',
+  path: '/$listId',
+  getParentRoute: () => ShoppingListsRoute,
 } as any)
 
 const ShareTokenRoute = ShareTokenImport.update({
@@ -109,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileImport
       parentRoute: typeof rootRoute
     }
+    '/shopping-lists': {
+      id: '/shopping-lists'
+      path: '/shopping-lists'
+      fullPath: '/shopping-lists'
+      preLoaderRoute: typeof ShoppingListsImport
+      parentRoute: typeof rootRoute
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
@@ -144,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShareTokenImport
       parentRoute: typeof rootRoute
     }
+    '/shopping-lists/$listId': {
+      id: '/shopping-lists/$listId'
+      path: '/$listId'
+      fullPath: '/shopping-lists/$listId'
+      preLoaderRoute: typeof ShoppingListsListIdImport
+      parentRoute: typeof ShoppingListsImport
+    }
     '/recipe/$recipeId/cook': {
       id: '/recipe/$recipeId/cook'
       path: '/cook'
@@ -163,6 +191,18 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface ShoppingListsRouteChildren {
+  ShoppingListsListIdRoute: typeof ShoppingListsListIdRoute
+}
+
+const ShoppingListsRouteChildren: ShoppingListsRouteChildren = {
+  ShoppingListsListIdRoute: ShoppingListsListIdRoute,
+}
+
+const ShoppingListsRouteWithChildren = ShoppingListsRoute._addFileChildren(
+  ShoppingListsRouteChildren,
+)
+
 interface RecipeRecipeIdRouteChildren {
   RecipeRecipeIdCookRoute: typeof RecipeRecipeIdCookRoute
   RecipeRecipeIdPrintRoute: typeof RecipeRecipeIdPrintRoute
@@ -181,11 +221,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add-recipe': typeof AddRecipeRoute
   '/profile': typeof ProfileRoute
+  '/shopping-lists': typeof ShoppingListsRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/recipe/$recipeId': typeof RecipeRecipeIdRouteWithChildren
   '/share/$token': typeof ShareTokenRoute
+  '/shopping-lists/$listId': typeof ShoppingListsListIdRoute
   '/recipe/$recipeId/cook': typeof RecipeRecipeIdCookRoute
   '/recipe/$recipeId/print': typeof RecipeRecipeIdPrintRoute
 }
@@ -194,11 +236,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add-recipe': typeof AddRecipeRoute
   '/profile': typeof ProfileRoute
+  '/shopping-lists': typeof ShoppingListsRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/recipe/$recipeId': typeof RecipeRecipeIdRouteWithChildren
   '/share/$token': typeof ShareTokenRoute
+  '/shopping-lists/$listId': typeof ShoppingListsListIdRoute
   '/recipe/$recipeId/cook': typeof RecipeRecipeIdCookRoute
   '/recipe/$recipeId/print': typeof RecipeRecipeIdPrintRoute
 }
@@ -208,11 +252,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/add-recipe': typeof AddRecipeRoute
   '/profile': typeof ProfileRoute
+  '/shopping-lists': typeof ShoppingListsRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/recipe/$recipeId': typeof RecipeRecipeIdRouteWithChildren
   '/share/$token': typeof ShareTokenRoute
+  '/shopping-lists/$listId': typeof ShoppingListsListIdRoute
   '/recipe/$recipeId/cook': typeof RecipeRecipeIdCookRoute
   '/recipe/$recipeId/print': typeof RecipeRecipeIdPrintRoute
 }
@@ -223,11 +269,13 @@ export interface FileRouteTypes {
     | '/'
     | '/add-recipe'
     | '/profile'
+    | '/shopping-lists'
     | '/signin'
     | '/signup'
     | '/unauthorized'
     | '/recipe/$recipeId'
     | '/share/$token'
+    | '/shopping-lists/$listId'
     | '/recipe/$recipeId/cook'
     | '/recipe/$recipeId/print'
   fileRoutesByTo: FileRoutesByTo
@@ -235,11 +283,13 @@ export interface FileRouteTypes {
     | '/'
     | '/add-recipe'
     | '/profile'
+    | '/shopping-lists'
     | '/signin'
     | '/signup'
     | '/unauthorized'
     | '/recipe/$recipeId'
     | '/share/$token'
+    | '/shopping-lists/$listId'
     | '/recipe/$recipeId/cook'
     | '/recipe/$recipeId/print'
   id:
@@ -247,11 +297,13 @@ export interface FileRouteTypes {
     | '/'
     | '/add-recipe'
     | '/profile'
+    | '/shopping-lists'
     | '/signin'
     | '/signup'
     | '/unauthorized'
     | '/recipe/$recipeId'
     | '/share/$token'
+    | '/shopping-lists/$listId'
     | '/recipe/$recipeId/cook'
     | '/recipe/$recipeId/print'
   fileRoutesById: FileRoutesById
@@ -261,6 +313,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddRecipeRoute: typeof AddRecipeRoute
   ProfileRoute: typeof ProfileRoute
+  ShoppingListsRoute: typeof ShoppingListsRouteWithChildren
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
@@ -272,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRecipeRoute: AddRecipeRoute,
   ProfileRoute: ProfileRoute,
+  ShoppingListsRoute: ShoppingListsRouteWithChildren,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   UnauthorizedRoute: UnauthorizedRoute,
@@ -292,6 +346,7 @@ export const routeTree = rootRoute
         "/",
         "/add-recipe",
         "/profile",
+        "/shopping-lists",
         "/signin",
         "/signup",
         "/unauthorized",
@@ -307,6 +362,12 @@ export const routeTree = rootRoute
     },
     "/profile": {
       "filePath": "profile.tsx"
+    },
+    "/shopping-lists": {
+      "filePath": "shopping-lists.tsx",
+      "children": [
+        "/shopping-lists/$listId"
+      ]
     },
     "/signin": {
       "filePath": "signin.tsx"
@@ -326,6 +387,10 @@ export const routeTree = rootRoute
     },
     "/share/$token": {
       "filePath": "share.$token.tsx"
+    },
+    "/shopping-lists/$listId": {
+      "filePath": "shopping-lists.$listId.tsx",
+      "parent": "/shopping-lists"
     },
     "/recipe/$recipeId/cook": {
       "filePath": "recipe.$recipeId.cook.tsx",

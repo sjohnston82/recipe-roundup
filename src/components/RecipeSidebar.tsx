@@ -17,6 +17,7 @@ import {
   XIcon,
   PlusIcon,
   ChefHatIcon,
+  ShoppingCartIcon,
 } from "lucide-react";
 import { type FilterOptions } from "./FixedRecipeFilters";
 import SearchBar from "./SearchBar";
@@ -114,11 +115,17 @@ export function RecipeSidebar({
               Add Recipe
             </Button>
           </Link>
-          
+
+          <Link to="/shopping-lists" className="block">
+            <Button className="w-full bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90 transition-opacity text-white font-semibold py-3">
+              <ShoppingCartIcon className="w-5 h-5 mr-2" />
+              Shopping Lists
+            </Button>
+          </Link>
+
           {/* Search Bar */}
           {onSearch && (
             <div className="space-y-2">
-              
               <SearchBar onSearch={onSearch} />
             </div>
           )}
@@ -127,7 +134,9 @@ export function RecipeSidebar({
         {/* Filters Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-center text-gradient-dark">Filters</h3>
+            <h3 className="text-lg font-semibold text-center text-gradient-dark">
+              Filters
+            </h3>
             {hasActiveFilters && (
               <button
                 onClick={clearAllFilters}
@@ -229,7 +238,9 @@ export function RecipeSidebar({
           {/* Cuisine Filter */}
           {availableCuisines.length > 0 && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Cuisine</label>
+              <label className="text-sm font-medium text-gray-700">
+                Cuisine
+              </label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -305,7 +316,9 @@ export function RecipeSidebar({
                           : ""
                       }
                     >
-                      <span className="flex-1">{tag} ({count})</span>
+                      <span className="flex-1">
+                        {tag} ({count})
+                      </span>
                       {filters.tags.includes(tag) && (
                         <span className="ml-auto">✓</span>
                       )}
@@ -319,7 +332,9 @@ export function RecipeSidebar({
           {/* Ingredients Filter */}
           {availableIngredients.length > 0 && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Ingredients</label>
+              <label className="text-sm font-medium text-gray-700">
+                Ingredients
+              </label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -350,7 +365,9 @@ export function RecipeSidebar({
                           : ""
                       }
                     >
-                      <span className="flex-1">{ingredient} ({count})</span>
+                      <span className="flex-1">
+                        {ingredient} ({count})
+                      </span>
                       {filters.ingredients.includes(ingredient) && (
                         <span className="ml-auto">✓</span>
                       )}
@@ -499,28 +516,36 @@ export function RecipeSidebar({
                   className={filters.minRating === 4 ? "bg-gray-50" : ""}
                 >
                   4+ stars
-                  {filters.minRating === 4 && <span className="ml-auto">✓</span>}
+                  {filters.minRating === 4 && (
+                    <span className="ml-auto">✓</span>
+                  )}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => updateFilters({ minRating: 3 })}
                   className={filters.minRating === 3 ? "bg-gray-50" : ""}
                 >
                   3+ stars
-                  {filters.minRating === 3 && <span className="ml-auto">✓</span>}
+                  {filters.minRating === 3 && (
+                    <span className="ml-auto">✓</span>
+                  )}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => updateFilters({ minRating: 2 })}
                   className={filters.minRating === 2 ? "bg-gray-50" : ""}
                 >
                   2+ stars
-                  {filters.minRating === 2 && <span className="ml-auto">✓</span>}
+                  {filters.minRating === 2 && (
+                    <span className="ml-auto">✓</span>
+                  )}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => updateFilters({ minRating: 1 })}
                   className={filters.minRating === 1 ? "bg-gray-50" : ""}
                 >
                   1+ stars
-                  {filters.minRating === 1 && <span className="ml-auto">✓</span>}
+                  {filters.minRating === 1 && (
+                    <span className="ml-auto">✓</span>
+                  )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -529,7 +554,9 @@ export function RecipeSidebar({
           {/* Active Filters Display */}
           {hasActiveFilters && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Active Filters</label>
+              <label className="text-sm font-medium text-gray-700">
+                Active Filters
+              </label>
               <div className="flex flex-wrap gap-2">
                 {filters.cuisine.map((cuisine) => (
                   <Badge

@@ -1,8 +1,6 @@
 import { createAPIFileRoute } from "@tanstack/react-start/api";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../server/db/prisma";
 import { auth } from "../lib/auth";
-
-const prisma = new PrismaClient();
 
 export const APIRoute = createAPIFileRoute("/api/share-recipe")({
   POST: async ({ request }) => {
@@ -45,19 +43,21 @@ export const APIRoute = createAPIFileRoute("/api/share-recipe")({
       let shareToken = existingRecipe.shareToken;
       if (!shareToken) {
         shareToken = crypto.randomUUID();
-        
+
         await prisma.recipe.update({
           where: { id: recipeId },
           data: { shareToken },
         });
       }
 
-      const shareUrl = `${request.headers.get('origin') || 'http://localhost:3000'}/share/${shareToken}`;
+      const shareUrl = `${
+        request.headers.get("origin") || "http://localhost:3000"
+      }/share/${shareToken}`;
 
-      return Response.json({ 
-        success: true, 
+      return Response.json({
+        success: true,
         shareToken,
-        shareUrl 
+        shareUrl,
       });
     } catch (error) {
       console.error("Error generating share link:", error);

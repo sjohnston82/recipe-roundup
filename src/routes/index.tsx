@@ -610,10 +610,15 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-6 gap-3">
                 <Link to="/add-recipe">
                   <Button className="bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90 transition-opacity">
                     Add Recipe
+                  </Button>
+                </Link>
+                <Link to="/shopping-lists">
+                  <Button variant="outline" className="cursor-pointer">
+                    Shopping Lists
                   </Button>
                 </Link>
               </div>

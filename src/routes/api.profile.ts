@@ -1,8 +1,6 @@
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { auth } from "../lib/auth";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../server/db/prisma";
 
 export const APIRoute = createAPIFileRoute("/api/profile")({
   PUT: async ({ request }) => {
