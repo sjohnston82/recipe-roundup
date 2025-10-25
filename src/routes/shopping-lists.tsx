@@ -121,9 +121,13 @@ export default function ShoppingListsPage() {
   return (
     <div className="min-h-screen bg-bg-light">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gradient-dark mb-6">
+        <h1 className="text-3xl font-bold text-gradient-dark mb-2">
           Shopping Lists
         </h1>
+        <p className="text-muted-text mb-6">
+          Organize groceries across lists. Create one for weekly shops, Costco
+          runs, or events.
+        </p>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
           <Input
@@ -146,41 +150,61 @@ export default function ShoppingListsPage() {
         ) : null}
 
         {loading ? (
-          <div className="text-center py-10">Loading...</div>
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gradient-dark"></div>
+            <p className="mt-2 text-muted-text">Loading lists...</p>
+          </div>
         ) : error?.status === 401 ? (
           <div className="text-center py-10">
             You're not signed in. <Link to="/signin">Sign in</Link> to manage
             shopping lists.
           </div>
         ) : data?.lists?.length ? (
-          <ul className="space-y-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {data.lists.map((l: any) => (
-              <li
+              <div
                 key={l.id}
-                className="p-4 border rounded-md bg-white flex justify-between items-center"
+                className="group p-5 rounded-xl border shadow-sm bg-white/90 hover:shadow-md transition-all"
               >
-                <div>
-                  <p className="font-semibold">{l.name}</p>
-                  <p className="text-sm text-muted-text">
-                    {l._count.items} items
-                  </p>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-semibold text-lg text-gradient-dark">
+                      {l.name}
+                    </p>
+                    <p className="text-sm text-muted-text">
+                      {l._count.items} {l._count.items === 1 ? "item" : "items"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link
+                      to="/shopping-lists/$listId"
+                      params={{ listId: l.id }}
+                    >
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-gradient-dark to-gradient-light"
+                      >
+                        Open
+                      </Button>
+                    </Link>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteList(l.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Link to="/shopping-lists/$listId" params={{ listId: l.id }}>
-                    <Button variant="outline">Open</Button>
-                  </Link>
-                  <Button
-                    variant="destructive"
-                    onClick={() => deleteList(l.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p className="text-muted-text">No lists yet.</p>
+          <div className="text-center py-16">
+            <p className="text-muted-text mb-4">
+              No lists yet. Create your first one above.
+            </p>
+          </div>
         )}
       </div>
       {/* Child route renders here (e.g., /shopping-lists/$listId) */}

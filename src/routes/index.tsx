@@ -617,7 +617,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link to="/shopping-lists">
-                  <Button variant="outline" className="cursor-pointer">
+                  <Button className="bg-gradient-to-r from-gradient-dark to-gradient-light hover:opacity-90 transition-opacity">
                     Shopping Lists
                   </Button>
                 </Link>

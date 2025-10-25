@@ -77,34 +77,114 @@ const ShoppingListItemRow = React.memo(function ShoppingListItemRow({
   item: any;
   onToggle: (itemId: string, checked: boolean) => void;
 }) {
+  const onRowClick = () => onToggle(item.id, !item.checked);
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+
+  const formatUnit = (u?: string) => {
+    if (!u) return "";
+    const map: Record<string, string> = {
+      teaspoon: "tsp",
+      tsp: "tsp",
+      teasp: "tsp",
+      teaspon: "tsp",
+      tablespoons: "tbsp",
+      tablespoon: "tbsp",
+      tbsp: "tbsp",
+      ounce: "oz",
+      ounces: "oz",
+      oz: "oz",
+      pound: "lb",
+      pounds: "lb",
+      lb: "lb",
+      gram: "g",
+      grams: "g",
+      g: "g",
+      kilogram: "kg",
+      kilograms: "kg",
+      kg: "kg",
+      milliliter: "ml",
+      milliliters: "ml",
+      ml: "ml",
+      liter: "l",
+      liters: "l",
+      l: "l",
+      cup: "cup",
+      cups: "cup",
+    };
+    return map[u.toLowerCase()] ?? u;
+  };
+
+  const formatQuantity = (q?: string) => {
+    if (!q) return "";
+    const num = Number(q);
+    if (Number.isNaN(num)) return q;
+    const fractions: Record<number, string> = {
+      0.13: "1/8",
+      0.17: "1/6",
+      0.25: "1/4",
+      0.33: "1/3",
+      0.38: "3/8",
+      0.5: "1/2",
+      0.63: "5/8",
+      0.66: "2/3",
+      0.75: "3/4",
+      0.88: "7/8",
+    };
+    const rounded = Math.round(num * 100) / 100;
+    const decimal = Number((rounded % 1).toFixed(2));
+    const frac = fractions[decimal];
+    if (frac) {
+      const whole = Math.floor(rounded);
+      return whole ? `${whole} ${frac}` : frac;
+    }
+    return `${rounded}`.replace(/\.0+$/, "");
+  };
+
   return (
-    <li className="flex items-center justify-between p-3 bg-white border rounded-md">
+    <li
+      className="p-4 bg-white/90 border rounded-xl shadow-sm"
+      onClick={onRowClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onRowClick();
+      }}
+    >
       <div className="flex items-center gap-3">
         <input
           type="checkbox"
+          className="self-center"
           checked={!!item.checked}
-          onChange={(e) => onToggle(item.id, e.target.checked)}
+          onChange={(e) => {
+            stop(e);
+            onToggle(item.id, e.target.checked);
+          }}
+          onClick={stop}
         />
-        <div className="flex flex-col">
-          <span className={item.checked ? "line-through text-muted-text" : ""}>
-            {item.originalText}
-          </span>
-          <span className="text-xs text-muted-text">
-            {item.recipe?.title && item.recipe?.id ? (
-              <>
-                sent from{" "}
-                <Link
-                  to="/recipe/$recipeId"
-                  params={{ recipeId: item.recipe.id }}
-                  className="underline"
-                >
-                  {item.recipe.title}
-                </Link>
-              </>
-            ) : (
-              "Manually added"
+        <div className="flex-1">
+          <div className={item.checked ? "line-through text-muted-text" : ""}>
+            <p className="font-medium text-gradient-dark">
+              {item.normalizedName || item.originalText}
+            </p>
+            {(item.quantity || item.unit) && (
+              <div className="text-xs text-muted-text">
+                amount needed for recipe: {formatQuantity(item.quantity)}{" "}
+                {formatUnit(item.unit)}
+              </div>
             )}
-          </span>
+          </div>
+          {item.recipe?.title && item.recipe?.id ? (
+            <div className="text-xs text-muted-text mt-1">
+              sent from{" "}
+              <Link
+                to="/recipe/$recipeId"
+                params={{ recipeId: item.recipe.id }}
+                className="underline"
+              >
+                {item.recipe.title}
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
     </li>
@@ -130,11 +210,13 @@ export default function ShoppingListDetail() {
     if (!text.trim()) return;
     setSubmitting(true);
     try {
+      // lightweight input sanitation to help parser
+      const sanitized = text.replace(/\bteaspon\b/gi, "teaspoon");
       const res = await fetch(`/api/shopping-list-items/${listId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ items: [{ originalText: text }] }),
+        body: JSON.stringify({ items: [{ originalText: sanitized }] }),
       });
       if (res.ok) {
         setText("");
@@ -150,7 +232,7 @@ export default function ShoppingListDetail() {
                         "randomUUID" in crypto &&
                         crypto.randomUUID()) ||
                       Math.random().toString(36).slice(2),
-                    originalText: text,
+                    originalText: sanitized,
                     checked: false,
                   },
                 ],

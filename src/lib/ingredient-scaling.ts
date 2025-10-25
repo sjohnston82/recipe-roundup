@@ -33,6 +33,8 @@ const MEASUREMENT_ALIASES: Record<string, string> = {
   gal: "gallon",
   "fl. oz": "fl oz",
   "fluid oz": "fl oz",
+  teasp: "tsp",
+  teaspon: "tsp",
   lbs: "lb",
   pounds: "pound",
   ounces: "ounce",
@@ -79,7 +81,7 @@ export function parseIngredient(ingredientText: string): ParsedIngredient {
   const amount = parseAmount(amountStr);
 
   // Extract unit from the beginning of remaining text
-  const unitMatch = remainingText.match(/^([a-zA-Z\.\s]+)/);
+  const unitMatch = remainingText.match(/^([a-zA-Z\.]+)/);
   let unit = "";
   let ingredient = remainingText;
 
@@ -90,7 +92,7 @@ export function parseIngredient(ingredientText: string): ParsedIngredient {
       MEASUREMENT_CONVERSIONS[potentialUnit] ||
       MEASUREMENT_ALIASES[potentialUnit]
     ) {
-      unit = potentialUnit;
+      unit = MEASUREMENT_ALIASES[potentialUnit] || potentialUnit;
       ingredient = remainingText.slice(unitMatch[0].length).trim();
     }
   }
