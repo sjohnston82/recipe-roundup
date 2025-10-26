@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from "react";
 import * as React from "react";
 import {
   createFileRoute,
@@ -7,19 +8,23 @@ import {
 } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type {
+  ShoppingListsResponse,
+  ShoppingListSummary,
+} from "@/types/shopping";
 
 export const Route = createFileRoute("/shopping-lists")({
   component: ShoppingListsPage,
 });
 
 function useShoppingLists() {
-  const [data, setData] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<null | {
+  const [data, setData] = useState<ShoppingListsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | {
     message: string;
     status?: number;
   }>(null);
-  const reload = React.useCallback(async () => {
+  const reload = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -40,22 +45,27 @@ function useShoppingLists() {
       setLoading(false);
     }
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     void reload();
   }, [reload]);
-  const optimisticAdd = (list: any) => {
+  const optimisticAdd = (list: ShoppingListSummary) => {
     setData((prev: any) => {
-      const lists = prev?.lists ? [...prev.lists] : [];
-      return { success: true, lists: [list, ...lists] };
+      const lists = (prev?.lists as ShoppingListSummary[] | undefined)
+        ? [...prev!.lists]
+        : [];
+      return {
+        success: true,
+        lists: [list, ...(lists as ShoppingListSummary[])],
+      } as ShoppingListsResponse;
     });
   };
 
   const optimisticRemove = (listId: string) => {
     setData((prev: any) => {
       const lists = prev?.lists
-        ? prev.lists.filter((l: any) => l.id !== listId)
-        : [];
-      return { success: true, lists };
+        ? (prev.lists as ShoppingListSummary[]).filter((l) => l.id !== listId)
+        : ([] as ShoppingListSummary[]);
+      return { success: true, lists } as ShoppingListsResponse;
     });
   };
 
@@ -65,10 +75,10 @@ function useShoppingLists() {
 export default function ShoppingListsPage() {
   const { data, loading, error, reload, optimisticAdd, optimisticRemove } =
     useShoppingLists();
-  const [name, setName] = React.useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
-  const [creating, setCreating] = React.useState(false);
-  const [createError, setCreateError] = React.useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const createList = async () => {
     if (!name.trim()) return;
@@ -83,7 +93,7 @@ export default function ShoppingListsPage() {
       });
       const json = await res.json().catch(() => null);
       if (res.ok && json?.success) {
-        // optimistic: show in list immediately if user stays
+        // optimistic: show in list immediately
         optimisticAdd({
           id: json.list.id,
           name: json.list.name,
@@ -91,10 +101,7 @@ export default function ShoppingListsPage() {
           updatedAt: json.list.updatedAt,
           _count: { items: 0 },
         });
-        navigate({
-          to: "/shopping-lists/$listId",
-          params: { listId: json.list.id },
-        });
+        setName("");
       } else if (res.status === 401) {
         navigate({ to: "/signin" });
       } else {
@@ -118,6 +125,17 @@ export default function ShoppingListsPage() {
     if (!res.ok) await reload();
   };
 
+  React.useEffect(() => {
+    const onDeleted = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { listId?: string };
+      if (detail?.listId) {
+        optimisticRemove(detail.listId);
+      }
+    };
+    window.addEventListener("shopping:listDeleted", onDeleted);
+    return () => window.removeEventListener("shopping:listDeleted", onDeleted);
+  }, []);
+
   return (
     <div className="min-h-screen bg-bg-light">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -133,6 +151,12 @@ export default function ShoppingListsPage() {
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                void createList();
+              }
+            }}
             placeholder="New list name (e.g., Weekly)"
             className="flex-1"
           />
@@ -161,7 +185,7 @@ export default function ShoppingListsPage() {
           </div>
         ) : data?.lists?.length ? (
           <div className="grid gap-4 sm:grid-cols-2">
-            {data.lists.map((l: any) => (
+            {data.lists.map((l: ShoppingListSummary) => (
               <div
                 key={l.id}
                 className="group p-5 rounded-xl border shadow-sm bg-white/90 hover:shadow-md transition-all"
@@ -207,7 +231,6 @@ export default function ShoppingListsPage() {
           </div>
         )}
       </div>
-      {/* Child route renders here (e.g., /shopping-lists/$listId) */}
       <Outlet />
     </div>
   );

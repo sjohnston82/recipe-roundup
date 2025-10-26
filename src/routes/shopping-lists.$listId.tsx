@@ -2,13 +2,14 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { ShoppingListDetail, ShoppingListItem } from "@/types/shopping";
 
 export const Route = createFileRoute("/shopping-lists/$listId")({
   component: ShoppingListDetail,
 });
 
 function useShoppingList(listId: string) {
-  const [data, setData] = React.useState<any>(null);
+  const [data, setData] = React.useState<ShoppingListDetail | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<null | {
     message: string;
@@ -26,7 +27,7 @@ function useShoppingList(listId: string) {
         setError({ message: "Failed to load list", status: res.status });
         setData(null);
       } else {
-        setData(json?.list ?? null);
+        setData((json?.list as ShoppingListDetail) ?? null);
       }
     } catch (_) {
       setError({ message: "Network error" });
@@ -40,9 +41,9 @@ function useShoppingList(listId: string) {
   }, [reload]);
   const optimisticToggle = React.useCallback(
     (itemId: string, checked: boolean) => {
-      setData((prev: any) => {
+      setData((prev) => {
         if (!prev) return prev;
-        const items = prev.items?.map((it: any) =>
+        const items = prev.items?.map((it) =>
           it.id === itemId ? { ...it, checked } : it
         );
         return { ...prev, items };
@@ -52,9 +53,9 @@ function useShoppingList(listId: string) {
   );
 
   const optimisticClearPurchased = React.useCallback(() => {
-    setData((prev: any) => {
+    setData((prev) => {
       if (!prev) return prev;
-      const items = prev.items?.filter((it: any) => !it.checked);
+      const items = prev.items?.filter((it) => !it.checked);
       return { ...prev, items };
     });
   }, []);
@@ -74,7 +75,7 @@ const ShoppingListItemRow = React.memo(function ShoppingListItemRow({
   item,
   onToggle,
 }: {
-  item: any;
+  item: ShoppingListItem;
   onToggle: (itemId: string, checked: boolean) => void;
 }) {
   const onRowClick = () => onToggle(item.id, !item.checked);
@@ -220,7 +221,7 @@ export default function ShoppingListDetail() {
       });
       if (res.ok) {
         setText("");
-        setData((prev: any) =>
+        setData((prev) =>
           prev
             ? {
                 ...prev,
@@ -234,7 +235,7 @@ export default function ShoppingListDetail() {
                       Math.random().toString(36).slice(2),
                     originalText: sanitized,
                     checked: false,
-                  },
+                  } as ShoppingListItem,
                 ],
               }
             : prev
@@ -280,6 +281,10 @@ export default function ShoppingListDetail() {
       credentials: "include",
     });
     if (res.ok) {
+      // Notify parent index to optimistically remove this list
+      window.dispatchEvent(
+        new CustomEvent("shopping:listDeleted", { detail: { listId } })
+      );
       navigate({ to: "/shopping-lists" });
     }
   };
@@ -316,7 +321,7 @@ export default function ShoppingListDetail() {
             </div>
 
             <ul className="space-y-2">
-              {data?.items?.map((it: any) => (
+              {data?.items?.map((it) => (
                 <ShoppingListItemRow key={it.id} item={it} onToggle={toggle} />
               ))}
             </ul>
@@ -324,6 +329,12 @@ export default function ShoppingListDetail() {
             <div className="flex gap-3 mt-8">
               <Button variant="outline" onClick={clearPurchased}>
                 Clear Purchased
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate({ to: "/shopping-lists" })}
+              >
+                Hide List
               </Button>
               <Button variant="destructive" onClick={deleteList}>
                 Delete List
