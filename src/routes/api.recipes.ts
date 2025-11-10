@@ -92,24 +92,29 @@ export const APIRoute = createAPIFileRoute("/api/recipes")({
 
   GET: async ({ request }) => {
     try {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session?.user?.id) {
+        return Response.json(
+          { success: false, error: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
       const url = new URL(request.url);
       const page = parseInt(url.searchParams.get("page") || "1");
       const limit = parseInt(url.searchParams.get("limit") || "10");
       const skip = (page - 1) * limit;
 
-      // Get total count for pagination info
-      const totalCount = await prisma.recipe.count();
+      const where = { userId: session.user.id };
+
+      const totalCount = await prisma.recipe.count({ where });
       const totalPages = Math.ceil(totalCount / limit);
 
       const recipes = await prisma.recipe.findMany({
-        include: {
-          notes: {
-            orderBy: { createdAt: "desc" },
-          },
-        },
-        // Order primarily by id desc to remain compatible pre-migration; client will prefer createdAt when present.
+        where,
+        include: { notes: { orderBy: { createdAt: "desc" } } },
         orderBy: { id: "desc" },
-        skip: skip,
+        skip,
         take: limit,
       });
 
@@ -117,7 +122,7 @@ export const APIRoute = createAPIFileRoute("/api/recipes")({
         success: true,
         recipes,
         pagination: {
-          currentPage: page,
+          page,
           totalPages,
           totalCount,
           limit,
